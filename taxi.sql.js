@@ -1,49 +1,49 @@
 import * as sqlite from 'sqlite';
 import sqlite3 from 'sqlite3';
 
-
-const dbPromise = sqlite.open({
-  filename: './taxi_queue.db',
-  driver: sqlite3.Database,
+const db = await sqlite.open({
+    filename: './taxi_queue.db',
+    driver: sqlite3.Database
 });
 
+await db.migrate();
+
 export async function joinQueue() {
-  const db = await dbPromise;
-  await db.run('UPDATE taxi_queue set passenger_queue_count = passenger_queue_count+1');
+    const sql = `update taxi_queue set passenger_queue_count = passenger_queue_count + 1`;
+    //console.log(await db.run(sql))
+    await db.run(sql);
 }
 
 export async function leaveQueue() {
-  const db = await dbPromise;
-  await db.run('UPDATE taxi_queue set passenger_queue_count = passenger_queue_count-1 ');
+    const sql = `update taxi_queue set passenger_queue_count = max(0, passenger_queue_count - 1)`;
+    await db.run(sql);
 }
 
 export async function joinTaxiQueue() {
-  const db = await dbPromise;
-  await db.run('INSERT INTO taxi_queue (taxi_queue_count) VALUES (1)');
+    const sql = `update taxi_queue set taxi_queue_count = taxi_queue_count + 1`;
+    await db.run(sql);
 }
 
 export async function queueLength() {
-  const db = await dbPromise;
-  const row = await db.get('SELECT SUM(passenger_queue_count) as total FROM taxi_queue');
-  return row ? row.total : 0;
+    const result = await db.get(`SELECT passenger_queue_count FROM taxi_queue`);
+    //console.log(result)
+    //console.log(result.passenger_queue_count)
+    return result.passenger_queue_count;
 }
 
 export async function taxiQueueLength() {
-  const db = await dbPromise;
-  const row = await db.get('SELECT SUM(taxi_queue_count) as total FROM taxi_queue');
-  return row ? row.total : 0;
+    const result = await db.get(`SELECT taxi_queue_count FROM taxi_queue`);
+    return result.taxi_queue_count;
 }
 
 export async function taxiDepart() {
-    const db = await dbPromise;
-  
-    // Check if there are enough passengers in the queue (12 or more)
-    const passengersCount = await queueLength();
-    if (passengersCount >= 12) {
-      // Remove a taxi from the taxi queue
-      await db.run('UPDATE taxi_queue SET taxi_queue_count = taxi_queue_count - 1 WHERE rowid = (SELECT rowid FROM taxi_queue LIMIT 1)');
-      
-      // Remove 12 passengers from the passenger queue
-      await db.run('DELETE FROM taxi_queue WHERE rowid IN (SELECT rowid FROM taxi_queue LIMIT 12)');
+    const result = await db.get(`SELECT passenger_queue_count, taxi_queue_count FROM taxi_queue`);
+    console.log(result.passenger_queue_count)
+    console.log(result.taxi_queue_count)
+    if (result.passenger_queue_count >= 12 && result.taxi_queue_count > 0) {
+       return  await db.run(`update taxi_queue set passenger_queue_count = passenger_queue_count - 12, taxi_queue_count = taxi_queue_count - 1`);
     }
-  }
+    else{
+      return
+    }
+}

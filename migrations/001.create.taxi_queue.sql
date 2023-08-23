@@ -3,3 +3,4 @@ create table taxi_queue (
     passenger_queue_count integer,
     taxi_queue_count integer
 );
+

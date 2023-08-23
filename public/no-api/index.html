@@ -29,8 +29,8 @@
 			<img src="../images/queue.png" alt="" width="100">
 			<img src="../images/queue.png" alt="" width="100">
 			<span class="passenger_queue_count count" x-text="passengerCount"></span>
-            <button class="join_queue" x-on:click="joinQueue()">Join</button>
-            <button class="leave_queue" x-on:click="leaveQueue()">Leave</button>
+            <button class="join_queue" x-on:click="joinQueue">Join</button>
+            <button class="leave_queue" x-on:click="leaveQueue">Leave</button>
 	
 		</div>
 
@@ -41,8 +41,8 @@
 			<img src="../images/minivan.png" alt="" width="100">
 			<img src="../images/minivan.png" alt="" width="100">
 			<img src="../images/minivan.png" alt="" width="100">
-			 <span class="taxi_queue_count count" x-text="taxiQueueLength()"></span>
-            <button class="join_taxi_queue" x-on:click="joinTaxiQueue()" >Join queue</button>
+			 <span class="taxi_queue_count count" x-text="taxiLength"></span>
+            <button class="join_taxi_queue" x-on:click="joinTaxiQueue" >Join queue</button>
 		</div>
 
 		<!-- Taxi Departing Section -->
