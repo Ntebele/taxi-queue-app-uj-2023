@@ -5,9 +5,10 @@ document.addEventListener('alpine:init', () => {
 		return {
 			version: 'api-1.0',
 			queueLength: 0,
-			
-		passengerCount: 0,
+			passengerCount: 0,
 			taxiCount: 0,
+
+
 			joinQueue() {
 
 				this.passengerCount++;
